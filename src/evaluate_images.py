@@ -6,8 +6,17 @@ import torch.nn as nn
 import os
 import random
 import glob
+import sys
 from PIL import Image
 from tqdm import tqdm
+
+# Import the shared BrainEncoder model
+try:
+    from utils import BrainEncoder
+except ImportError:
+    # Fallback if running from root directory
+    sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+    from src.utils import BrainEncoder
 
 # --- CONFIGURATION ---
 DATA_DIR = "things_eeg_data"
@@ -19,43 +28,28 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"🚀 Running Image-to-Image Evaluation on: {device.upper()}")
 
 # ==========================================
-# 1. BRAIN ENCODER (Must match training)
-# ==========================================
-class BrainEncoder(nn.Module):
-    def __init__(self, num_channels=63, time_points=91):
-        super().__init__()
-        self.features = nn.Sequential(
-            nn.Conv1d(num_channels, 128, 32, padding=16), nn.GroupNorm(8, 128), nn.GELU(), nn.MaxPool1d(2),
-            nn.Conv1d(128, 256, 16, padding=8), nn.GroupNorm(16, 256), nn.GELU(), nn.MaxPool1d(2),
-            nn.Conv1d(256, 512, 8, padding=4), nn.GroupNorm(32, 512), nn.GELU(), nn.MaxPool1d(2),
-            nn.Flatten()
-        )
-        with torch.no_grad():
-            dummy = torch.zeros(1, num_channels, time_points)
-            flat_out = self.features(dummy).shape[1]
-        self.adapter = nn.Sequential(
-            nn.Linear(flat_out, 4096), nn.GELU(), nn.Dropout(0.1),
-            nn.Linear(4096, 768) 
-        )
-    def forward(self, x):
-        feat = self.features(x)
-        return self.adapter(feat).unsqueeze(1).repeat(1, 77, 1)
-
-# ==========================================
-# 2. MAIN EVALUATION LOOP
+# MAIN EVALUATION LOOP
 # ==========================================
 def evaluate_reconstruction():
     # 1. Load Brain Adapter
     checkpoints = glob.glob(f"{CHECKPOINT_DIR}/*.pth")
-    if not checkpoints: return
+    if not checkpoints: 
+        print(f"❌ No checkpoints found in {CHECKPOINT_DIR}")
+        return
+        
     latest_model = max(checkpoints, key=os.path.getctime)
+    print(f"   📂 Loading checkpoint: {latest_model}")
     
     # Detect shape
     sample_files = glob.glob(os.path.join(DATA_DIR, "arr_0_sub-*.npy"))
+    if not sample_files:
+        print("❌ No data found.")
+        return
+        
     sample_data = np.load(sample_files[0], mmap_mode='r')
     
     adapter = BrainEncoder(num_channels=sample_data.shape[1], time_points=sample_data.shape[2]).to(device)
-    adapter.load_state_dict(torch.load(latest_model), strict=False)
+    adapter.load_state_dict(torch.load(latest_model, map_location=device), strict=False)
     adapter.eval()
 
     # 2. Load Stable Diffusion (Generation)
@@ -74,6 +68,11 @@ def evaluate_reconstruction():
     print("📡 Loading Test Data...")
     target_sub_x = os.path.join(DATA_DIR, "arr_0_sub-01.npy")
     target_sub_y = os.path.join(DATA_DIR, "arr_1_sub-01.npy")
+    
+    if not os.path.exists(target_sub_x):
+        print(f"❌ File not found: {target_sub_x}")
+        return
+
     X_test = np.load(target_sub_x).astype(np.float32)
     y_test = np.load(target_sub_y, allow_pickle=True)
     
@@ -84,9 +83,9 @@ def evaluate_reconstruction():
     valid_indices = [i for i, label in enumerate(y_test) if label not in ['-1', 'n/a', 'nan']]
     
     # Randomly select samples
-    indices = random.sample(valid_indices, NUM_SAMPLES)
+    indices = random.sample(valid_indices, min(NUM_SAMPLES, len(valid_indices)))
     
-    print(f"\n📊 Evaluating {NUM_SAMPLES} samples...")
+    print(f"\n📊 Evaluating {len(indices)} samples...")
     scores = []
     
     for i, idx in enumerate(tqdm(indices)):
@@ -126,15 +125,18 @@ def evaluate_reconstruction():
             similarity = (image_features[0] @ image_features[1].T).item()
             scores.append(similarity)
 
-    avg_score = np.mean(scores)
-    print("\n" + "="*40)
-    print(f"🏆 Average CLIP Image Similarity: {avg_score:.4f}")
-    print("="*40)
-    print("Interpretation:")
-    print("   < 0.60: Random / Noise")
-    print("   0.60 - 0.70: Vague conceptual match")
-    print("   > 0.70: Strong visual/semantic match")
-    print("   > 0.85: Near-perfect reconstruction")
+    if scores:
+        avg_score = np.mean(scores)
+        print("\n" + "="*40)
+        print(f"🏆 Average CLIP Image Similarity: {avg_score:.4f}")
+        print("="*40)
+        print("Interpretation:")
+        print("   < 0.60: Random / Noise")
+        print("   0.60 - 0.70: Vague conceptual match")
+        print("   > 0.70: Strong visual/semantic match")
+        print("   > 0.85: Near-perfect reconstruction")
+    else:
+        print("❌ No scores computed.")
 
 if __name__ == "__main__":
     evaluate_reconstruction()

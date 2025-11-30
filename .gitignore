@@ -1,35 +1,30 @@
-Python
-
-pycache/
+__pycache__/
 *.py[cod]
 *$py.class
 
-Data (Too large for git)
-
+# Data (Too large for git)
 things_eeg_data/
 raw_data/
 things_images/
 data_archives/
 temp_extraction_area/
 
-Models & Checkpoints
-
+# Models & Checkpoints
 *.pth
 *.ckpt
 *.safetensors
 mind_reader_adapter/
 mind_reader_checkpoints/
 
-Output Results
-
+# Output Results
 *.csv
 *.png
 *.jpg
 *.gif
 mind_reader_gallery/
 
-Environment
-
+# Environment
 .env
 venv/
 .vscode/
+.DS_Store

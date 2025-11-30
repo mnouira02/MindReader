@@ -11,6 +11,15 @@ import glob
 import random
 import sys
 
+# Import the shared BrainEncoder model
+# Ensure you run this script from the src folder, or adjust sys.path if running from root
+try:
+    from utils import BrainEncoder
+except ImportError:
+    # Fallback if running from root directory
+    sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+    from src.utils import BrainEncoder
+
 # --- CONFIGURATION (ULTRA LOW VRAM) ---
 DATA_DIR = "things_eeg_data"
 IMAGE_DIR = "things_images"
@@ -20,43 +29,13 @@ BATCH_SIZE = 1
 GRAD_ACCUM_STEPS = 8    # Increased accumulation for stability
 EPOCHS = 10      
 LR = 1e-5        
-SAVE_EVERY_STEPS = 5000 # <--- NEW: Save intermediate checkpoints
+SAVE_EVERY_STEPS = 5000 
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"🚀 Running ULTRA LOW VRAM Adapter Training on: {device.upper()}")
 
 # ==========================================
-# 1. BRAIN ENCODER (Optimized for 8GB VRAM)
-# ==========================================
-class BrainEncoder(nn.Module):
-    def __init__(self, num_channels=63, time_points=91):
-        super().__init__()
-        self.features = nn.Sequential(
-            nn.Conv1d(num_channels, 128, 32, padding=16), nn.GroupNorm(8, 128), nn.GELU(), nn.MaxPool1d(2),
-            nn.Conv1d(128, 256, 16, padding=8), nn.GroupNorm(16, 256), nn.GELU(), nn.MaxPool1d(2),
-            nn.Conv1d(256, 512, 8, padding=4), nn.GroupNorm(32, 512), nn.GELU(), nn.MaxPool1d(2),
-            nn.Flatten()
-        )
-        
-        with torch.no_grad():
-            dummy = torch.zeros(1, num_channels, time_points)
-            flat_out = self.features(dummy).shape[1]
-            print(f"   ℹ️ BrainEncoder Flat Size: {flat_out}")
-
-        # OPTIMIZATION: Predict only 1 token instead of 77
-        self.adapter = nn.Sequential(
-            nn.Linear(flat_out, 4096), nn.GELU(), nn.Dropout(0.1),
-            nn.Linear(4096, 768) 
-        )
-
-    def forward(self, x):
-        feat = self.features(x)
-        embed = self.adapter(feat) # (Batch, 768)
-        # Expand to (Batch, 77, 768) for Stable Diffusion
-        return embed.unsqueeze(1).repeat(1, 77, 1)
-
-# ==========================================
-# 2. DATASET
+# 1. DATASET
 # ==========================================
 class EEGImageDataset(Dataset):
     def __init__(self, eeg_dir, img_dir):
@@ -115,7 +94,7 @@ class EEGImageDataset(Dataset):
         return eeg_tensor, pixel_values
 
 # ==========================================
-# 3. TRAINING LOOP
+# 2. TRAINING LOOP
 # ==========================================
 def train_adapter():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -140,7 +119,7 @@ def train_adapter():
     real_time_points = sample_data.shape[2]
     print(f"   Detected Data Shape: Channels={real_channels}, Time={real_time_points}")
 
-    # Initialize Adapter
+    # Initialize Adapter (Imported from utils)
     adapter = BrainEncoder(num_channels=real_channels, time_points=real_time_points).to(device)
     adapter.train()
     
