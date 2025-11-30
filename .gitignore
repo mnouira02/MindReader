@@ -1,0 +1,35 @@
+Python
+
+pycache/
+*.py[cod]
+*$py.class
+
+Data (Too large for git)
+
+things_eeg_data/
+raw_data/
+things_images/
+data_archives/
+temp_extraction_area/
+
+Models & Checkpoints
+
+*.pth
+*.ckpt
+*.safetensors
+mind_reader_adapter/
+mind_reader_checkpoints/
+
+Output Results
+
+*.csv
+*.png
+*.jpg
+*.gif
+mind_reader_gallery/
+
+Environment
+
+.env
+venv/
+.vscode/
