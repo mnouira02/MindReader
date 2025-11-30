@@ -2,6 +2,8 @@
 
 MindReader is an end-to-end deep learning pipeline that decodes visual perception from non-invasive EEG signals. By training a custom ControlNet adapter on 1.1 million EEG trials from the THINGS-EEG dataset, this project successfully reconstructs the "gist"—shapes, colors, and textures—of what a person is seeing, directly from their brainwaves.
 
+[![Medium](https://img.shields.io/badge/Medium-Read_the_Story-black?logo=medium)](https://medium.com/@mnouira/reading-minds-with-python-how-i-trained-a-brain-to-image-decoder-on-a-consumer-laptop-3c81451edbe1)
+
 ## 🧠 How it Works
 
 The human skull acts as a low-pass filter, blurring neuronal activity into noisy surface signals. To overcome this, MindReader employs a multi-stage approach:
