@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindReader: Decoding Visual Perception</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* BASE STYLES */
+        :root {
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-primary: #38bdf8;
+            /* Light Blue */
+            --accent-secondary: #818cf8;
+            /* Indigo */
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --font-main: 'Inter', sans-serif;
+            --font-code: 'Space Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .slide {
+            background-color: var(--bg-card);
+            width: 1280px;
+            height: 720px;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 60px;
+            border: 1px solid #334155;
+        }
+
+        /* TYPOGRAPHY */
+        h1 {
+            font-size: 72px;
+            font-weight: 800;
+            margin: 0 0 20px 0;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+
+        h2 {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 0 0 40px 0;
+            color: var(--accent-primary);
+        }
+
+        h3 {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0 0 15px 0;
+            color: var(--text-main);
+        }
+
+        p {
+            font-size: 24px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin: 0 0 20px 0;
+        }
+
+        code {
+            font-family: var(--font-code);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: var(--accent-secondary);
+        }
+
+        /* LAYOUTS */
+        .layout-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            height: 100%;
+        }
+
+        .layout-center {
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* COMPONENTS */
+        .concept-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        .visual-box {
+            background: #000;
+            border-radius: 12px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .step-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .step-list li {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            font-size: 22px;
+            color: var(--text-muted);
+        }
+
+        .step-list i {
+            margin-right: 15px;
+            margin-top: 5px;
+            color: var(--accent-secondary);
+        }
+
+        .metric-box {
+            text-align: center;
+            background: rgba(56, 189, 248, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .metric-val {
+            font-size: 64px;
+            font-weight: 800;
+            color: var(--accent-primary);
+            font-family: var(--font-code);
+        }
+
+        .metric-label {
+            font-size: 18px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pipeline-arrow {
+            font-size: 30px;
+            color: var(--text-muted);
+            margin: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SLIDE 1: TITLE -->
+    <div class="slide layout-center">
+        <h1
+            style="background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            Decoding the Mind
+        </h1>
+        <p style="max-width: 800px;">A Technical Deep Dive into Brain-Computer Interfaces (BCI) and Generative AI.</p>
+        <div style="margin-top: 40px; padding: 20px 40px; border: 1px solid #334155; border-radius: 50px;">
+            <span style="color: var(--accent-primary);">Project MindReader</span>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: THE PROBLEM (CONCEPT) -->
+    <div class="slide">
+        <div class="logo">01. THE PROBLEM</div>
+        <h2>The "Black Box" of Perception</h2>
+        <div class="layout-split">
+            <div>
+                <p>When you see an object, your brain fires a complex electrical pattern. To a computer, this pattern
+                    looks like <strong>pure noise</strong>.</p>
+                <div class="concept-card">
+                    <h3><i class="fa-solid fa-bolt"></i> The Challenge</h3>
+                    <p>EEG sensors sit <em>outside</em> the skull. The bone acts as a low-pass filter, blurring the
+                        crisp neuronal spikes into a "hum."</p>
+                </div>
+                <div class="concept-card">
+                    <h3><i class="fa-solid fa-magnifying-glass"></i> The Goal</h3>
+                    <p>Can we train an AI to find the "needle in the haystack"—the specific visual signal hidden inside
+                        the noise—and reconstruct the image?</p>
+                </div>
+            </div>
+            <div class="visual-box">
+                <!-- Placeholder for Diagram: Noisy EEG Signal vs Clean Image -->
+
+                <div
+                    style="position: absolute; bottom: 20px; color: white; background: rgba(0,0,0,0.7); padding: 10px;">
+                    Signal vs. Perception</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: CONCEPT - CONTRASTIVE LEARNING -->
+    <div class="slide">
+        <div class="logo">02. AI CONCEPTS</div>
+        <h2>Concept: Contrastive Learning</h2>
+        <p>How do we teach a machine to understand relationships without labels? We don't tell it "This is a dog." We
+            tell it "A matches B."</p>
+
+        <div class="layout-split">
+            <div style="display: flex; flex-direction: column; justify-content: center;">
+                <ul class="step-list">
+                    <li><i class="fa-solid fa-layer-group"></i> <strong>The Batch:</strong> We take 128 random
+                        Brainwave-Image pairs.</li>
+                    <li><i class="fa-solid fa-check"></i> <strong>Positive Pair:</strong> Brainwave A + Image A (Correct
+                        Match).</li>
+                    <li><i class="fa-solid fa-xmark"></i> <strong>Negative Pair:</strong> Brainwave A + Image B
+                        (Incorrect Match).</li>
+                    <li><i class="fa-solid fa-graduation-cap"></i> <strong>The Task:</strong> The model must pull
+                        Positive Pairs closer together in mathematical space and push Negative Pairs apart.</li>
+                </ul>
+            </div>
+            <div class="visual-box" style="background: #1e293b;">
+                <!-- Concept Visualization of Vector Space -->
+
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 60px; margin-bottom: 20px;">🧠 <span style="color: #4ade80;">⟷</span> 🖼️
+                    </div>
+                    <p>Aligning Brain Space & Image Space</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: CONCEPT - CLIP EMBEDDINGS -->
+    <div class="slide">
+        <div class="logo">03. AI CONCEPTS</div>
+        <h2>The Universal Translator: CLIP</h2>
+        <p>We cannot translate Brainwaves directly to Pixels. We need a middleman language.</p>
+
+        <div
+            style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: 20px; align-items: center; margin-top: 40px;">
+            <div class="metric-box">
+                <div class="metric-val" style="font-size: 40px;">Brain</div>
+                <p>Noisy Voltage</p>
+            </div>
+            <div class="pipeline-arrow">➜</div>
+            <div class="metric-box"
+                style="border-color: var(--accent-secondary); background: rgba(129, 140, 248, 0.1);">
+                <div class="metric-val" style="font-size: 40px; color: var(--accent-secondary);">Embedding</div>
+                <p>Vector [0.1, -0.5, ...]</p>
+            </div>
+            <div class="pipeline-arrow">➜</div>
+            <div class="metric-box">
+                <div class="metric-val" style="font-size: 40px;">Image</div>
+                <p>Pixels</p>
+            </div>
+        </div>
+
+        <div class="concept-card" style="margin-top: 40px;">
+            <h3>Why Embeddings?</h3>
+            <p>An <strong>Embedding</strong> is a list of 768 numbers that represents the <em>meaning</em> of an image.
+                "Dog" and "Wolf" have similar numbers. "Dog" and "Car" have different numbers. We train the brain to
+                predict these numbers.</p>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: PROJECT IMPLEMENTATION -->
+    <div class="slide">
+        <div class="logo">04. EXECUTION</div>
+        <h2>The MindReader Pipeline</h2>
+        <div class="layout-split">
+            <div>
+                <h3>Step 1: The "Big Data"</h3>
+                <p>We processed the <strong>THINGS-EEG</strong> dataset.</p>
+                <div class="metric-box"
+                    style="text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <div class="metric-val">50</div>
+                        <div class="metric-label">Subjects</div>
+                    </div>
+                    <div>
+                        <div class="metric-val">1.1M</div>
+                        <div class="metric-label">Trials</div>
+                    </div>
+                </div>
+                <h3>Step 2: The Architecture</h3>
+                <p>We built a custom <strong>ControlNet Adapter</strong>. This small neural network takes EEG signals
+                    and injects them into a frozen <strong>Stable Diffusion</strong> model, steering the image
+                    generation process.</p>
+            </div>
+            <div>
+                <div class="concept-card">
+                    <h3><i class="fa-solid fa-microchip"></i> Engineering Feat</h3>
+                    <p>Training this required massive compute. We optimized it to run on a single consumer GPU (RTX
+                        2080) using:</p>
+                    <ul>
+                        <li><strong>Gradient Accumulation:</strong> Simulating large batches.</li>
+                        <li><strong>Mixed Precision (FP16):</strong> Halving memory usage.</li>
+                        <li><strong>Feature Caching:</strong> Pre-computing CLIP vectors.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: RESULTS -->
+    <div class="slide">
+        <div class="logo">05. RESULTS</div>
+        <h2>From Noise to Signal</h2>
+        <div class="layout-split">
+            <div>
+                <h3 style="color: var(--success);">Retrieval Accuracy</h3>
+                <p>Can the model pick the correct image out of 128 random options?</p>
+                <div class="metric-box">
+                    <div class="metric-val">64.2%</div>
+                    <div class="metric-label">Our Model</div>
+                    <p style="font-size: 14px; margin-top: 10px; opacity: 0.7;">vs 0.8% Random Chance</p>
+                </div>
+                <p style="margin-top: 20px;">This proves the model isn't guessing. It has learned a robust mapping
+                    between brain activity and visual concepts.</p>
+            </div>
+            <div class="visual-box"
+                style="background: white; flex-direction: column; justify-content: flex-start; padding: 20px;">
+                <h3 style="color: #002b5c; margin-bottom: 20px;">Generative Reconstruction</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;">
+                    <!-- Placeholders for user result images -->
+                    <div
+                        style="background: #eee; height: 150px; border-radius: 8px; display: grid; place-items: center; color: #333;">
+                        Input: "Bun"<br>(User Saw)</div>
+                    <div
+                        style="background: #eee; height: 150px; border-radius: 8px; display: grid; place-items: center; color: #333;">
+                        Output: Round/Golden<br>(AI Dreamt)</div>
+                    <div
+                        style="background: #eee; height: 150px; border-radius: 8px; display: grid; place-items: center; color: #333;">
+                        Input: "Washboard"<br>(User Saw)</div>
+                    <div
+                        style="background: #eee; height: 150px; border-radius: 8px; display: grid; place-items: center; color: #333;">
+                        Output: Linear Texture<br>(AI Dreamt)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: CONCLUSION -->
+    <div class="slide layout-center">
+        <div class="logo">06. FUTURE</div>
+        <h2>The Next Frontier: Steering</h2>
+        <p style="max-width: 900px; text-align: center;">We have proven we can <strong>READ</strong> the signal. The
+            next step is to <strong>CONTROL</strong> it.</p>
+
+        <div class="tile-grid"
+            style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 40px; width: 100%;">
+            <div class="concept-card">
+                <h3>Current State</h3>
+                <p>Passive Decoding. The user looks at an image, and we try to guess what it is.</p>
+            </div>
+            <div class="concept-card" style="border-left-color: var(--success);">
+                <h3>Future Project</h3>
+                <p><strong>Steering Vectors.</strong> Can we mathematically identify the "Truth" vector in an LLM? Can
+                    we perform "neurosurgery" on a model to stop hallucinations?</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
